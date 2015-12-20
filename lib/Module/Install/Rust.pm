@@ -140,8 +140,31 @@ sub _rust_write_cargo {
 
 sub _rust_setup_makefile {
     my $self = shift;
+    my $class = ref $self;
 
-    $self->preamble("all ::\n\tCFLAGS=-I\$(PERL_INC) cargo build --release\n\n");
+    # FIXME: don't assume libraries have "lib" prefix
+
+    $self->postamble(<<MAKE);
+# --- $class section:
+
+INST_RUSTDYLIB = \$(INST_ARCHAUTODIR)/\$(DLBASE).\$(DLEXT)
+RUST_TARGETDIR = target/release
+RUST_DYLIB = \$(RUST_TARGETDIR)/lib\$(DLBASE).\$(DLEXT)
+CARGO = cargo
+
+dynamic :: \$(INST_RUSTDYLIB)
+
+\$(RUST_DYLIB) :: export CFLAGS=-I\$(PERL_INC)
+\$(RUST_DYLIB) ::
+	\$(CARGO) build --release
+
+\$(INST_RUSTDYLIB): \$(RUST_DYLIB)
+	\$(CP) \$< \$@
+
+clean ::
+	\$(CARGO) clean
+	\$(RM) Cargo.toml Cargo.lock
+MAKE
 }
 
 =head1 AUTHOR
