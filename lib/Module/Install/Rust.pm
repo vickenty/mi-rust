@@ -77,8 +77,7 @@ sub rust_feature {
 
     rust_use_perl_xs;
 
-Adds dependency on C<perl-xs> crate and configures it according to the current
-perl version.
+Adds dependency on C<perl-xs> crate.
 
 =cut
 
@@ -86,11 +85,6 @@ sub rust_use_perl_xs {
     my ($self, $spec) = @_;
 
     $spec //= { version => "0" };
-
-    my $features = $spec->{features} //= [];
-
-    push @$features, "perl_multiplicity"
-        if $Config::Config{usemultiplicity};
 
     $self->rust_requires("perl-xs", $spec);
 }
@@ -154,9 +148,8 @@ CARGO = cargo
 
 dynamic :: \$(INST_RUSTDYLIB)
 
-\$(RUST_DYLIB) :: export CFLAGS=-I\$(PERL_INC)
 \$(RUST_DYLIB) ::
-	\$(CARGO) build --release
+	PERL=\$(FULLPERL) \$(CARGO) build --release
 
 \$(INST_RUSTDYLIB): \$(RUST_DYLIB)
 	\$(CP) \$< \$@
