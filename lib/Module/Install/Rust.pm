@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Module::Install::Base;
-use TOML ();
+use TOML 0.97 ();
 use Config ();
 
 our @ISA = qw( Module::Install::Base );
