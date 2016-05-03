@@ -129,7 +129,7 @@ sub _rust_write_cargo {
 
     my $crate_spec = {
         package => {
-            name => $self->name,
+            name => lc $self->name,
             description => $self->abstract,
             version => "1.0.0", # FIXME
         },
