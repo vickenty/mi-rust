@@ -122,13 +122,20 @@ sub rust_write {
     $self->_rust_setup_makefile;
 }
 
+sub _rust_crate_name {
+    lc shift->name
+}
+
+sub _rust_target_name {
+    shift->_rust_crate_name =~ s/-/_/gr
+}
 
 sub _rust_write_cargo {
     my $self = shift;
 
     my $crate_spec = {
         package => {
-            name => lc $self->name,
+            name => $self->_rust_crate_name,
             description => $self->abstract,
             version => "1.0.0", # FIXME
         },
@@ -155,13 +162,14 @@ sub _rust_setup_makefile {
     my $class = ref $self;
 
     # FIXME: don't assume libraries have "lib" prefix
+    my $libname = "lib" . $self->_rust_target_name;
 
     $self->postamble(<<MAKE);
 # --- $class section:
 
 INST_RUSTDYLIB = \$(INST_ARCHAUTODIR)/\$(DLBASE).\$(DLEXT)
 RUST_TARGETDIR = target/release
-RUST_DYLIB = \$(RUST_TARGETDIR)/lib\$(DLBASE).\$(DLEXT)
+RUST_DYLIB = \$(RUST_TARGETDIR)/$libname.\$(DLEXT)
 CARGO = cargo
 CARGO_OPTS = --release
 
