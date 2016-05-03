@@ -89,7 +89,7 @@ sub rust_use_perl_xs {
     $self->rust_clean_on_rebuild("perl-sys");
 }
 
-=head2 rust_cargo_clean
+=head2 rust_clean_on_rebuild
 
     rust_clean_on_rebuild;
     # or
