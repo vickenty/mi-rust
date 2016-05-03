@@ -6,6 +6,11 @@ MANIFEST.SKIP
 META.yml
 README
 t/00-load.t
+t/ffi.t
+t/ffi/lib/Test/Module/Install/Rust/FFI.pm
+t/ffi/Makefile.PL
+t/ffi/src/lib.rs
+t/ffi/t/double.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
