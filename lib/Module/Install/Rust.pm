@@ -31,7 +31,6 @@ our $VERSION = '0.01';
     # ...
 
     rust_requires libc => "0.2";
-    rust_use_perl_xs;
     rust_write;
 
     WriteAll;
