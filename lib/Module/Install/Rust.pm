@@ -87,6 +87,25 @@ sub rust_use_perl_xs {
     $spec //= { version => "0" };
 
     $self->rust_requires("perl-xs", $spec);
+    $self->rust_clean_on_rebuild("perl-sys");
+}
+
+=head2 rust_cargo_clean
+
+    rust_clean_on_rebuild;
+    # or
+    rust_clean_on_rebuild qw/crate_name/;
+
+If Makefile changed since last build, force C<cargo clean> run. If crate names
+are specified, force clean only for those packages (C<cargo clean -p>).
+
+=cut
+
+sub rust_clean_on_rebuild {
+    my ($self, @args) = @_;
+
+    my $crates = $self->{cargo_clean} //= [];
+    push @$crates, @args;
 }
 
 =head2 rust_write
@@ -145,11 +164,25 @@ INST_RUSTDYLIB = \$(INST_ARCHAUTODIR)/\$(DLBASE).\$(DLEXT)
 RUST_TARGETDIR = target/release
 RUST_DYLIB = \$(RUST_TARGETDIR)/lib\$(DLBASE).\$(DLEXT)
 CARGO = cargo
+CARGO_OPTS = --release
 
 dynamic :: \$(INST_RUSTDYLIB)
 
+MAKE
+
+    if ($self->{cargo_clean}) {
+        my @opts = map qq{-p "$_"}, @{$self->{cargo_clean}};
+
+        $self->postamble(<<MAKE);
 \$(RUST_DYLIB) ::
-	PERL=\$(FULLPERL) \$(CARGO) build --release
+	test \$(FIRST_MAKEFILE) -ot \$@ || \$(CARGO) clean \$(CARGO_OPTS) @opts
+
+MAKE
+    }
+
+    $self->postamble(<<MAKE);
+\$(RUST_DYLIB) ::
+	PERL=\$(FULLPERL) \$(CARGO) build \$(CARGO_OPTS)
 
 \$(INST_RUSTDYLIB): \$(RUST_DYLIB)
 	\$(CP) \$< \$@
