@@ -7,6 +7,9 @@ use Test::More;
 unless (eval { require FFI::Platypus::Declare }) {
     plan(skip_all => "FFI::Platypus required for this test");
 }
+unless (`cargo -V`) {
+    plan(skip_all => "cargo not found");
+}
 
 ok eval {
     chdir "$Bin/ffi" or die "$!";
