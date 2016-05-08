@@ -19,8 +19,4 @@ build_requires "Test::More" => 0;
 
 requires "TOML" => "0.97";
 
-# Used by rust-xs build script.
-requires "Ouroboros" => 0;
-requires "File::Slurp" => 0;
-
 WriteAll;
