@@ -76,7 +76,7 @@ sub rust_feature {
 
     rust_use_perl_xs;
 
-Adds dependency on C<perl-xs> crate.
+Configure crate to use C<perl-xs> bindings.
 
 =cut
 
