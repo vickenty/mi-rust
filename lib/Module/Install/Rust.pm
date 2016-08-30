@@ -157,7 +157,7 @@ sub _rust_write_cargo {
         },
 
         lib => {
-            "crate-type" => [ "dylib" ],
+            "crate-type" => [ "cdylib" ],
         },
     };
 
