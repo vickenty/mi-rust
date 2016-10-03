@@ -183,6 +183,29 @@ sub _rust_setup_makefile {
     # FIXME: don't assume libraries have "lib" prefix
     my $libname = "lib" . $self->_rust_target_name;
 
+    my $postproc;
+    if ($^O eq "darwin") {
+        # On darwin, Perl uses special darwin-specific format for loadable
+        # modules. Normally it is produced by passing "-bundle" flag to the
+        # linker, but Rust as of 1.12 does not support that.
+        #
+        # "-C link-args=-bundle" doesn't work, because then "-bundle" conflicts
+        # with "-dylib" option used by rustc.
+        #
+        # However, it seems possible to produce correct ".bundle" file by
+        # running linker with correct options on the shared library that was
+        # created by rustc.
+        $postproc = <<MAKE;
+	\$(LD) \$(LDDLFLAGS) -o \$@ \$<
+MAKE
+    } else {
+        $postproc = <<MAKE;
+	\$(CP) \$< \$@
+MAKE
+    }
+
+
+
     $self->postamble(<<MAKE);
 # --- $class section:
 
@@ -211,7 +234,7 @@ MAKE
 	PERL=\$(FULLPERL) \$(CARGO) build \$(CARGO_OPTS)
 
 \$(INST_RUSTDYLIB): \$(RUST_DYLIB)
-	\$(CP) \$< \$@
+$postproc
 
 clean ::
 	\$(CARGO) clean
