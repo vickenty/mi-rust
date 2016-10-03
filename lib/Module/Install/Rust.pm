@@ -188,7 +188,7 @@ sub _rust_setup_makefile {
 
 INST_RUSTDYLIB = \$(INST_ARCHAUTODIR)/\$(DLBASE).\$(DLEXT)
 RUST_TARGETDIR = target/release
-RUST_DYLIB = \$(RUST_TARGETDIR)/$libname.\$(DLEXT)
+RUST_DYLIB = \$(RUST_TARGETDIR)/$libname.\$(SO)
 CARGO = cargo
 CARGO_OPTS = --release
 
