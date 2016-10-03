@@ -183,8 +183,12 @@ sub _rust_setup_makefile {
     # FIXME: don't assume libraries have "lib" prefix
     my $libname = "lib" . $self->_rust_target_name;
 
+    my $rustc_opts = "";
     my $postproc;
     if ($^O eq "darwin") {
+        # Linker flag to allow bundle to use symbols from the parent process.
+        $rustc_opts = "-C link-args='-undefined dynamic_lookup'";
+
         # On darwin, Perl uses special darwin-specific format for loadable
         # modules. Normally it is produced by passing "-bundle" flag to the
         # linker, but Rust as of 1.12 does not support that.
@@ -214,6 +218,7 @@ RUST_TARGETDIR = target/release
 RUST_DYLIB = \$(RUST_TARGETDIR)/$libname.\$(SO)
 CARGO = cargo
 CARGO_OPTS = --release
+RUSTC_OPTS = $rustc_opts
 
 dynamic :: \$(INST_RUSTDYLIB)
 
@@ -231,7 +236,7 @@ MAKE
 
     $self->postamble(<<MAKE);
 \$(RUST_DYLIB) ::
-	PERL=\$(FULLPERL) \$(CARGO) build \$(CARGO_OPTS)
+	PERL=\$(FULLPERL) \$(CARGO) rustc \$(CARGO_OPTS) -- \$(RUSTC_OPTS)
 
 \$(INST_RUSTDYLIB): \$(RUST_DYLIB)
 $postproc
