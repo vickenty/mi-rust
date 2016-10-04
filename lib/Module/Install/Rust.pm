@@ -20,7 +20,7 @@ Version 0.02
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 
 =head1 SYNOPSIS
@@ -257,7 +257,7 @@ Please report any bugs or feature requests to L<https://github.com/vickenty/mi-r
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2015 Vickenty Fesunov.
+Copyright 2016 Vickenty Fesunov.
 
 This module may be used, modified, and distributed under the same terms as Perl
 itself. Please see the license that came with your Perl distribution for
